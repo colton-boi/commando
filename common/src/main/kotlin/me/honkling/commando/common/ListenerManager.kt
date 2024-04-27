@@ -1,8 +1,7 @@
-package me.honkling.knockffa.manager
+package me.honkling.commando.common
 
 import me.honkling.commando.common.annotations.Listener
 import me.honkling.commando.common.generic.IPlugin
-import me.honkling.commando.common.getClassesInPackage
 
 abstract class ListenerManager<T>(val plugin: IPlugin<T>) {
     fun registerListeners(pkg: String) {
