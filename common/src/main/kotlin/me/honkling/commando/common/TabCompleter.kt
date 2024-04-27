@@ -5,7 +5,7 @@ import me.honkling.commando.common.tree.CommandNode
 import me.honkling.commando.common.tree.Node
 import me.honkling.commando.common.tree.SubcommandNode
 
-fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: CommandNode, args: Array<String>): List<String> {
+fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: CommandNode<*>, args: Array<String>): List<String> {
     val last = args.last()
 
     // /example
@@ -19,7 +19,7 @@ fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: Com
 
     val (completionNode, count) = getNode(node, args.toList())
 
-    if (completionNode is CommandNode)
+    if (completionNode is CommandNode<*>)
         return completionNode.children.map { it.name }.filter { it != completionNode.name }
 
     val arguments = args.toMutableList()
@@ -54,13 +54,13 @@ fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: Com
     return emptyList()
 }
 
-private fun getNode(node: CommandNode, args: List<String>, count: Int = 0): Pair<Node, Int> {
+private fun getNode(node: CommandNode<*>, args: List<String>, count: Int = 0): Pair<Node, Int> {
     if (args.isEmpty())
         return node to count
 
     val childNode = node.children.find { it.name == args[0] || it.name == node.name } ?: return node to count
 
-    if (childNode is CommandNode)
+    if (childNode is CommandNode<*>)
         return getNode(childNode, args.slice(1..<args.size), count + 1)
 
     return childNode to count + 1

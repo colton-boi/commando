@@ -1,5 +1,9 @@
 package me.honkling.commando.common
 
+import me.honkling.commando.common.annotations.DESCRIPTION
+import me.honkling.commando.common.annotations.PERMISSION
+import me.honkling.commando.common.annotations.PERMISSION_MESSAGE
+import me.honkling.commando.common.annotations.USAGE
 import me.honkling.commando.common.generic.ICommandSender
 import me.honkling.commando.common.generic.IPlugin
 import me.honkling.commando.common.tree.CommandNode
@@ -8,7 +12,7 @@ import me.honkling.commando.common.types.*
 import java.lang.reflect.Array.*
 
 abstract class CommandManager<T>(val plugin: IPlugin<T>) {
-    val commands = mutableMapOf<String, CommandNode>()
+    val commands = mutableMapOf<String, CommandNode<*>>()
     val types = mutableMapOf<Class<*>, Type<*>>(
         Boolean::class.java to BooleanType,
         Double::class.java to DoubleType,
@@ -25,18 +29,30 @@ abstract class CommandManager<T>(val plugin: IPlugin<T>) {
                 commands[command.name.lowercase()] = command
 
         for ((_, node) in commands)
-            registerCommand(node)
+            registerToPlatform(node)
+    }
+
+    fun <T> registerCommand(
+        name: String,
+        vararg aliases: String,
+        description: String = DESCRIPTION,
+        usage: String = USAGE,
+        usageHandler: (T) -> Unit = {},
+        permission: String = PERMISSION,
+        permissionMessage: String = PERMISSION_MESSAGE
+    ): CommandNode<T> {
+        return CommandNode<T>(null, name, aliases.toList(), description, usage, permission, permissionMessage, usageHandler)
     }
 
     abstract fun isValidSender(clazz: Class<*>): Boolean
-    abstract fun registerCommand(node: CommandNode)
+    abstract fun registerToPlatform(node: CommandNode<*>)
 
-    fun getCommand(sender: ICommandSender<*>, command: CommandNode, args: List<String>): Pair<SubcommandNode, List<Any>>? {
+    fun getCommand(sender: ICommandSender<*>, command: CommandNode<*>, args: List<String>): Pair<SubcommandNode, List<Any>>? {
         val postFirst = args.slice(1 until args.size)
 
         for (node in command.children) {
             when (node) {
-                is CommandNode -> {
+                is CommandNode<*> -> {
                     if (args.isEmpty())
                         continue
 

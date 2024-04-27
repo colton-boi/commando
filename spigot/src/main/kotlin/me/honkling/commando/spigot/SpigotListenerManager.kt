@@ -25,6 +25,7 @@ class SpigotListenerManager(plugin: JavaPlugin) : ListenerManager<JavaPlugin>(Pl
                 listenerInstance,
                 EventPriority.NORMAL,
                 EventExecutor { _, evt ->
+                    method.isAccessible = true
                     method.invoke(null, evt)
                 },
                 plugin.get()

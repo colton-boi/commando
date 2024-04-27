@@ -8,31 +8,31 @@ import me.honkling.commando.common.tree.SubcommandNode
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
-fun scanForCommands(manager: CommandManager<*>, pkg: String): List<CommandNode> {
+fun scanForCommands(manager: CommandManager<*>, pkg: String): List<CommandNode<*>> {
 	val clazz = manager.plugin.get()!!::class.java
 	val classes = getClassesInPackage(clazz, pkg, ::isCommand)
 
 	return parseClasses(manager, classes)
 }
 
-private fun parseClasses(manager: CommandManager<*>, classes: List<Class<*>>): List<CommandNode> {
+private fun parseClasses(manager: CommandManager<*>, classes: List<Class<*>>): List<CommandNode<*>> {
 	return classes.map { parseClass(manager, null, it) }
 }
 
-private fun parseClass(manager: CommandManager<*>, parent: Node?, clazz: Class<*>): CommandNode {
+private fun parseClass(manager: CommandManager<*>, parent: Node?, clazz: Class<*>): CommandNode<*> {
 	val annotation = clazz.getAnnotation(Command::class.java)
-	val node = CommandNode(
+	val node =
+		if (annotation != null) CommandNode<Any>(
 			parent,
 			annotation.name.lowercase(),
 			annotation.aliases.toList(),
 			annotation.description,
 			annotation.usage,
 			annotation.permission,
-			annotation.permissionMessage
-	)
+			annotation.permissionMessage)
+		else getRegisterCommand(clazz)!!.invoke(null, manager) as CommandNode<*>
 
 	node.children.addAll(parseChildren(manager, node, clazz))
-
 	return node
 }
 
@@ -148,5 +148,13 @@ private fun isSubcommand(manager: CommandManager<*>, method: Method): Boolean {
 }
 
 private fun isCommand(clazz: Class<*>): Boolean {
-	return clazz.isAnnotationPresent(Command::class.java)
+	return clazz.isAnnotationPresent(Command::class.java) || getRegisterCommand(clazz) != null
+}
+
+private fun getRegisterCommand(clazz: Class<*>): Method? {
+	return try {
+		clazz.getDeclaredMethod("registerCommand", CommandManager::class.java)
+	} catch (exception: NoSuchMethodException) {
+		null
+	}
 }

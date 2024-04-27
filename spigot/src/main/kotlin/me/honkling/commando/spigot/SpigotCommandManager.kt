@@ -32,7 +32,7 @@ class SpigotCommandManager(plugin: JavaPlugin) : CommandManager<JavaPlugin>(Plug
         )
     }
 
-    override fun registerCommand(node: CommandNode) {
+    override fun registerToPlatform(node: CommandNode<*>) {
         val commandMap = Bukkit.getCommandMap()
 
         for ((_, node) in commands) {
@@ -51,14 +51,24 @@ class SpigotCommandManager(plugin: JavaPlugin) : CommandManager<JavaPlugin>(Plug
     private fun onCommand(sender: CommandSender, bukkitCommand: Command, label: String, args: Array<String>): Boolean {
         val provider = SenderProvider(sender)
         val command = commands[bukkitCommand.name.lowercase()] ?: return false
-        val (subcommand, parameters) = getCommand(provider, command, args.toList()) ?: return false
+        val result = getCommand(provider, command, args.toList())
 
+        if (result == null) {
+            if (command.usageHandler != null) {
+               (command.usageHandler as (CommandSender) -> Unit).invoke(provider.get())
+                return true
+            }
+
+            return false
+        }
+
+        val (subcommand, parameters) = result
         subcommand.method.invoke(null, sender, *parameters.toTypedArray())
 
         return true
     }
 
-    private fun createPluginCommand(node: CommandNode): PluginCommand {
+    private fun createPluginCommand(node: CommandNode<*>): PluginCommand {
         val mm = MiniMessage.miniMessage()
         val constructor = PluginCommand::class.java.declaredConstructors[0]
         constructor.isAccessible = true
