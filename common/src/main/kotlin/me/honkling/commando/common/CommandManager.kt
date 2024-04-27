@@ -41,13 +41,13 @@ abstract class CommandManager<T>(val plugin: IPlugin<T>) {
         permission: String = PERMISSION,
         permissionMessage: String = PERMISSION_MESSAGE
     ): CommandNode<T> {
-        return CommandNode<T>(null, name, aliases.toList(), description, usage, permission, permissionMessage, usageHandler)
+        return CommandNode(null, name, aliases.toList(), description, usage, permission, permissionMessage, usageHandler)
     }
 
     abstract fun isValidSender(clazz: Class<*>): Boolean
     abstract fun registerToPlatform(node: CommandNode<*>)
 
-    fun getCommand(sender: ICommandSender<*>, command: CommandNode<*>, args: List<String>): Pair<SubcommandNode, List<Any>>? {
+    fun getCommand(sender: ICommandSender<*>, command: CommandNode<*>, args: List<String>): Pair<SubcommandNode, List<Any?>>? {
         val postFirst = args.slice(1 until args.size)
 
         for (node in command.children) {
@@ -75,18 +75,21 @@ abstract class CommandManager<T>(val plugin: IPlugin<T>) {
         return null
     }
 
-    private fun parseArguments(sender: ICommandSender<*>, command: SubcommandNode, args: List<String>): Pair<Boolean, List<Any>> {
+    private fun parseArguments(sender: ICommandSender<*>, command: SubcommandNode, args: List<String>): Pair<Boolean, List<Any?>> {
         @Suppress("NAME_SHADOWING") var args = args
-        val parameters = mutableListOf<Any>()
+        val parameters = mutableListOf<Any?>()
 
         for ((index, parameter) in command.parameters.withIndex()) {
-            if (parameter.greedy && index + 1 < command.parameters.size) {
-                plugin.warn("Vararg parameter '${parameter.name}' must be the last parameter")
+            if (parameter.greedy && index + 1 < command.parameters.size)
                 return false to parameters
-            }
 
-            if (args.isEmpty())
+            if (args.isEmpty()) {
+                if (!parameter.required)
+                    for (i in index..<command.parameters.size)
+                        parameters.add(null)
+
                 return !parameter.required to parameters
+            }
 
             val type = types[parameter.type]
 

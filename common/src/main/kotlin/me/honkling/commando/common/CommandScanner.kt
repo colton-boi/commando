@@ -1,6 +1,7 @@
 package me.honkling.commando.common
 
 import me.honkling.commando.common.annotations.Command
+import me.honkling.commando.common.annotations.Optional
 import me.honkling.commando.common.tree.CommandNode
 import me.honkling.commando.common.tree.Node
 import me.honkling.commando.common.tree.Parameter
@@ -109,7 +110,7 @@ private fun parseParameters(manager: CommandManager<*>, method: Method): List<Pa
 }
 
 private fun isParameterRequired(parameter: java.lang.reflect.Parameter): Boolean {
-	return parameter.annotations.none { "Nullable" in (it.annotationClass.qualifiedName ?: "") }
+	return !parameter.isAnnotationPresent(Optional::class.java) && parameter.annotations.none { "Nullable" in (it.annotationClass.qualifiedName ?: "") }
 }
 
 private fun getParameterType(manager: CommandManager<*>, parameter: java.lang.reflect.Parameter): Class<*> {

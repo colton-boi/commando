@@ -8,6 +8,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
 import org.bukkit.plugin.java.JavaPlugin
+import java.lang.reflect.Modifier
 
 class SpigotListenerManager(plugin: JavaPlugin) : ListenerManager<JavaPlugin>(Plugin(plugin)) {
     override fun registerClass(clazz: Class<*>) {
@@ -16,7 +17,7 @@ class SpigotListenerManager(plugin: JavaPlugin) : ListenerManager<JavaPlugin>(Pl
         for (method in clazz.declaredMethods) {
             val event = method.parameters.firstOrNull() ?: continue
 
-            if (!method.canAccess(null) || !isEvent(event.type))
+            if (!Modifier.isStatic(method.modifiers) || !isEvent(event.type))
                 continue
 
             @Suppress("UNCHECKED_CAST")
