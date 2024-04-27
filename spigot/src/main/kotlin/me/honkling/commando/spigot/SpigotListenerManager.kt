@@ -1,7 +1,7 @@
 package me.honkling.commando.spigot
 
+import me.honkling.commando.common.ListenerManager
 import me.honkling.commando.spigot.impl.Plugin
-import me.honkling.knockffa.manager.ListenerManager
 import org.bukkit.Bukkit
 import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
@@ -24,7 +24,7 @@ class SpigotListenerManager(plugin: JavaPlugin) : ListenerManager<JavaPlugin>(Pl
                 event.type as Class<out Event>,
                 listenerInstance,
                 EventPriority.NORMAL,
-                EventExecutor { _, evt ->
+                { _, evt ->
                     method.isAccessible = true
                     method.invoke(null, evt)
                 },
