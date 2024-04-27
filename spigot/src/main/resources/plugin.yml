@@ -7,3 +7,5 @@ load: STARTUP
 authors: [ honkling ]
 description: Command manager for various platforms.
 website: https://github.com/honkling/commando
+libraries:
+  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20
