@@ -5,6 +5,9 @@ const val USAGE = "<gray>Invalid usage."
 const val PERMISSION = ""
 const val PERMISSION_MESSAGE = "<gray>You don't have access to <white>/{0}</white>."
 
+/**
+ * Marks the file as a command.
+ */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Command(

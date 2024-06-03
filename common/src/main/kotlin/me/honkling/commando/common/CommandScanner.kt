@@ -1,6 +1,7 @@
 package me.honkling.commando.common
 
 import me.honkling.commando.common.annotations.Command
+import me.honkling.commando.common.annotations.Ignore
 import me.honkling.commando.common.annotations.Optional
 import me.honkling.commando.common.tree.CommandNode
 import me.honkling.commando.common.tree.Node
@@ -137,19 +138,21 @@ private fun getClassFromType(clazz: Class<*>): Class<*> {
 
 private fun isSubcommand(manager: CommandManager<*>, method: Method): Boolean {
 	val modifiers = method.modifiers
-	val isPublic = Modifier.isPublic(modifiers)
 	val isStatic = Modifier.isStatic(modifiers)
 
-	if (isPublic && !isStatic) {
-		manager.plugin.warn("Found a public non-static method '${method.name}'. Please make this static (to be registered as a subcommand) or private (to hide this warning)")
+	if (method.isAnnotationPresent(Ignore::class.java))
+		return false
+
+	if (!isStatic) {
+		manager.plugin.warn("Found a non-static method '${method.name}'. Please make this static (to be registered as a subcommand) or mark as ignored (to hide this warning)")
 		return false
 	}
 
-	return isPublic
+	return true
 }
 
 private fun isCommand(clazz: Class<*>): Boolean {
-	return clazz.isAnnotationPresent(Command::class.java) || getRegisterCommand(clazz) != null
+	return (clazz.isAnnotationPresent(Command::class.java) || getRegisterCommand(clazz) != null) && !clazz.isAnnotationPresent(Ignore::class.java)
 }
 
 private fun getRegisterCommand(clazz: Class<*>): Method? {
