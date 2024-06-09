@@ -11,7 +11,7 @@ import me.honkling.commando.common.tree.SubcommandNode
 import me.honkling.commando.common.types.*
 import java.lang.reflect.Array.*
 
-abstract class CommandManager<T>(val plugin: IPlugin<T>) {
+abstract class CommandManager<T>(val plugin: IPlugin<T>, val debugMode: Boolean) {
     val commands = mutableMapOf<String, CommandNode<*>>()
     val types = mutableMapOf<Class<*>, Type<*>>(
         Boolean::class.java to BooleanType,
@@ -24,12 +24,18 @@ abstract class CommandManager<T>(val plugin: IPlugin<T>) {
     )
 
     fun registerCommands(vararg packages: String) {
-        for (pkg in packages)
-            for (command in scanForCommands(this, pkg))
-                commands[command.name.lowercase()] = command
+        debugLog("Registering commands with packages \"${packages.joinToString("\", \"")}\"")
 
-        for ((_, node) in commands)
+        for (pkg in packages)
+            for (command in scanForCommands(this, pkg)) {
+                debugLog("Found command $command")
+                commands[command.name.lowercase()] = command
+            }
+
+        for ((_, node) in commands) {
+            debugLog("Registering command node $node")
             registerToPlatform(node)
+        }
     }
 
     fun <T> registerCommand(
@@ -127,5 +133,10 @@ abstract class CommandManager<T>(val plugin: IPlugin<T>) {
         }
 
         return true to parameters
+    }
+
+    fun debugLog(message: String) {
+        if (debugMode)
+            plugin.info(message)
     }
 }

@@ -7,6 +7,10 @@ class Plugin(private val plugin: MinestomPlugin) : IPlugin<MinestomPlugin> {
 
     override fun get(): MinestomPlugin = plugin
 
+    override fun info(message: String) {
+        plugin.logger.info(message)
+    }
+
     override fun warn(message: String) {
         plugin.logger.warning(message)
     }

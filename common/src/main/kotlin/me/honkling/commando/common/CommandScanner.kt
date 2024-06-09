@@ -11,8 +11,11 @@ import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
 fun scanForCommands(manager: CommandManager<*>, pkg: String): List<CommandNode<*>> {
+	manager.debugLog("Scanning package \"$pkg\"")
 	val clazz = manager.plugin.get()!!::class.java
 	val classes = getClassesInPackage(clazz, pkg, ::isCommand)
+
+	manager.debugLog("Found classes \"${classes.joinToString("\", \"") { it.name }}\"")
 
 	return parseClasses(manager, classes)
 }

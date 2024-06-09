@@ -6,6 +6,10 @@ import org.bukkit.plugin.java.JavaPlugin
 class Plugin(private val plugin: JavaPlugin) : IPlugin<JavaPlugin> {
     override fun get(): JavaPlugin = plugin
 
+    override fun info(message: String) {
+        plugin.logger.info(message)
+    }
+
     override fun warn(message: String) {
         plugin.logger.warning(message)
     }
