@@ -1,7 +1,7 @@
 package me.honkling.commando.minestom
 
-import java.util.logging.LogManager
+import java.util.logging.Logger
 
 open class MinestomPlugin {
-    val logger = LogManager.getLogManager().getLogger("Minestom")
+    val logger = Logger.getLogger("Minestom")
 }
