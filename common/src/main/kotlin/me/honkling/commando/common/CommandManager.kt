@@ -54,29 +54,43 @@ abstract class CommandManager<T>(val plugin: IPlugin<T>, val debugMode: Boolean 
     abstract fun registerToPlatform(node: CommandNode<*>)
 
     fun getCommand(sender: ICommandSender<*>, command: CommandNode<*>, args: List<String>): Pair<SubcommandNode, List<Any?>>? {
+        debugLog("Getting command with node $command from args $args")
         val postFirst = args.slice(1 until args.size)
 
         for (node in command.children) {
+            debugLog("Node: $node")
+
             when (node) {
                 is CommandNode<*> -> {
                     if (args.isEmpty())
                         continue
 
+                    debugLog("Node is a command. Recursing!")
                     return getCommand(sender, node, postFirst) ?: continue
                 }
                 is SubcommandNode -> {
-                    if (node.name != command.name && (args.isEmpty() || args.first().lowercase() != node.name))
+                    debugLog("Node is a subcommand.")
+
+                    if (node.name != command.name && (args.isEmpty() || args.first().lowercase() != node.name.lowercase()))
                         continue
+
+                    debugLog("First parameter is valid.")
 
                     val (isValid, parameters) = parseArguments(sender, node, if (node.name == command.name) args else postFirst)
 
+                    debugLog("Is valid: $isValid, parameters: $parameters")
+
                     if (!isValid)
                         continue
+
+                    debugLog("Command matching success!")
 
                     return node to parameters
                 }
             }
         }
+
+        debugLog("Command failed to match.")
 
         return null
     }
