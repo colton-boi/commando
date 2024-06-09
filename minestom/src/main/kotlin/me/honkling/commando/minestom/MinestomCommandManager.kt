@@ -59,7 +59,7 @@ class MinestomCommandManager(plugin: MinestomPlugin) : CommandManager<MinestomPl
     private fun createPluginCommand(node: CommandNode<*>): Command {
         return object : Command(node.name, *node.aliases.toTypedArray()) {
             init {
-                condition = ::hasAccess as CommandCondition
+                condition = CommandCondition { sender, command -> hasAccess(sender) }
 
                 defaultExecutor = CommandExecutor { sender, context ->
                     process(sender, emptyArray())
