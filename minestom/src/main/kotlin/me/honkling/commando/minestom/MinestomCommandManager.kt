@@ -35,6 +35,7 @@ class MinestomCommandManager(plugin: MinestomPlugin, debugMode: Boolean = false)
     }
 
     private fun onCommand(sender: CommandSender, simpleCommand: Command, args: Array<String>): Boolean {
+        debugLog("Parsing command $simpleCommand with args ${args.toList()}")
         val provider = SenderProvider(sender)
         val command = commands[simpleCommand.name.lowercase()] ?: return false
         val result = getCommand(provider, command, args.toList())
