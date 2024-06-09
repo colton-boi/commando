@@ -18,7 +18,7 @@ import org.bukkit.command.PluginCommand
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
-class SpigotCommandManager(plugin: JavaPlugin) : CommandManager<JavaPlugin>(Plugin(plugin)) {
+class SpigotCommandManager(plugin: JavaPlugin, debugMode: Boolean = false) : CommandManager<JavaPlugin>(Plugin(plugin), debugMode) {
     init {
         types[Player::class.java] = PlayerType
         types[OfflinePlayer::class.java] = OfflinePlayerType

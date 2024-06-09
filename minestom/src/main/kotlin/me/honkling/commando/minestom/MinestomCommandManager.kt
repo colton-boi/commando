@@ -16,7 +16,7 @@ import net.minestom.server.command.builder.condition.CommandCondition
 import net.minestom.server.entity.Player
 import net.minestom.server.permission.Permission
 
-class MinestomCommandManager(plugin: MinestomPlugin) : CommandManager<MinestomPlugin>(Plugin(plugin)) {
+class MinestomCommandManager(plugin: MinestomPlugin, debugMode: Boolean = false) : CommandManager<MinestomPlugin>(Plugin(plugin), debugMode) {
     init {
         types[Player::class.java] = PlayerType
     }

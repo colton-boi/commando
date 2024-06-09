@@ -11,7 +11,7 @@ import me.honkling.commando.common.tree.SubcommandNode
 import me.honkling.commando.common.types.*
 import java.lang.reflect.Array.*
 
-abstract class CommandManager<T>(val plugin: IPlugin<T>, val debugMode: Boolean) {
+abstract class CommandManager<T>(val plugin: IPlugin<T>, val debugMode: Boolean = false) {
     val commands = mutableMapOf<String, CommandNode<*>>()
     val types = mutableMapOf<Class<*>, Type<*>>(
         Boolean::class.java to BooleanType,
