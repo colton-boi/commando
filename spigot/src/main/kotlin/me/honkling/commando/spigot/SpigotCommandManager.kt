@@ -35,17 +35,15 @@ class SpigotCommandManager(plugin: JavaPlugin, debugMode: Boolean = false) : Com
     override fun registerToPlatform(node: CommandNode<*>) {
         val commandMap = Bukkit.getCommandMap()
 
-        for ((_, node) in commands) {
-            val command = createPluginCommand(node)
-            command.setExecutor(::onCommand)
+        val command = createPluginCommand(node)
+        command.setExecutor(::onCommand)
 
-            command.setTabCompleter { sender, command, _, args ->
-                val node = commands[command.name] ?: return@setTabCompleter emptyList()
-                return@setTabCompleter tabComplete(this, SenderProvider(sender), node, args)
-            }
-
-            commandMap.register(plugin.get().name, command)
+        command.setTabCompleter { sender, command, _, args ->
+            val node = commands[command.name] ?: return@setTabCompleter emptyList()
+            return@setTabCompleter tabComplete(this, SenderProvider(sender), node, args)
         }
+
+        commandMap.register(plugin.get().name, command)
     }
 
     private fun onCommand(sender: CommandSender, bukkitCommand: Command, label: String, args: Array<String>): Boolean {

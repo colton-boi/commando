@@ -30,10 +30,8 @@ class MinestomCommandManager(plugin: MinestomPlugin, debugMode: Boolean = false)
     }
 
     override fun registerToPlatform(node: CommandNode<*>) {
-        for ((_, node) in commands) {
-            val command = createPluginCommand(node)
-            MinecraftServer.getCommandManager().register(command)
-        }
+        val command = createPluginCommand(node)
+        MinecraftServer.getCommandManager().register(command)
     }
 
     private fun onCommand(sender: CommandSender, simpleCommand: Command, args: Array<String>): Boolean {
@@ -80,7 +78,7 @@ class MinestomCommandManager(plugin: MinestomPlugin, debugMode: Boolean = false)
             }
 
             fun hasAccess(sender: CommandSender): Boolean {
-                return sender.hasPermission(Permission(node.permission))
+                return node.permission.isEmpty() || sender.hasPermission(Permission(node.permission))
             }
         }
     }
