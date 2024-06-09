@@ -17,6 +17,8 @@ abstract class CommandManager<T>(val plugin: IPlugin<T>, val debugMode: Boolean 
         Boolean::class.java to BooleanType,
         Double::class.java to DoubleType,
         Int::class.java to IntegerType,
+        Float::class.java to FloatType,
+        java.lang.Float::class.java to FloatType,
         java.lang.Boolean::class.java to BooleanType,
         java.lang.Double::class.java to DoubleType,
         java.lang.Integer::class.java to IntegerType,
