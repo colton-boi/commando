@@ -13,7 +13,7 @@ class MinestomListenerManager(debugMode: Boolean = false) : ListenerManager<Mine
             debugLog("Found method ${method.name}")
             val event = method.parameters.firstOrNull() ?: continue
 
-            if (!Modifier.isStatic(method.modifiers) || !isEvent(event.type))
+            if (!Modifier.isStatic(method.modifiers) || !isEvent(event.type) || method.parameterCount != 1 || method.name.contains("\$lambda")) {}
                 continue
 
             debugLog("Method is static, and uses event ${event.type.name}. Registering event!")
