@@ -10,15 +10,19 @@ import org.bukkit.plugin.EventExecutor
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.reflect.Modifier
 
-class SpigotListenerManager(plugin: JavaPlugin) : ListenerManager<JavaPlugin>(Plugin(plugin)) {
+class SpigotListenerManager(plugin: JavaPlugin, debugMode: Boolean = false) : ListenerManager<JavaPlugin>(Plugin(plugin), debugMode) {
     override fun registerClass(clazz: Class<*>) {
         val listenerInstance = object : Listener {} as Listener
+        debugLog("Registering class ${clazz.name}")
 
         for (method in clazz.declaredMethods) {
+            debugLog("Found method ${method.name}")
             val event = method.parameters.firstOrNull() ?: continue
 
             if (!Modifier.isStatic(method.modifiers) || !isEvent(event.type))
                 continue
+
+            debugLog("Method is static, and uses event ${event.type.name}. Registering event!")
 
             @Suppress("UNCHECKED_CAST")
             Bukkit.getPluginManager().registerEvent(
@@ -26,6 +30,8 @@ class SpigotListenerManager(plugin: JavaPlugin) : ListenerManager<JavaPlugin>(Pl
                 listenerInstance,
                 EventPriority.NORMAL,
                 { _, evt ->
+                    debugLog("Calling ${method.name} in ${method.declaringClass.name} with args ${listOf(evt)}")
+                    debugLog("Method parameters: ${method.parameterTypes.toList().map { it.name }}")
                     method.isAccessible = true
                     method.invoke(null, evt)
                 },
