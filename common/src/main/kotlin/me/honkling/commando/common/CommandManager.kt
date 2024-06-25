@@ -148,6 +148,9 @@ abstract class CommandManager<T>(val plugin: IPlugin<T>, val debugMode: Boolean 
             }
         }
 
+        if (args.isNotEmpty())
+            return false to parameters
+
         return true to parameters
     }
 
