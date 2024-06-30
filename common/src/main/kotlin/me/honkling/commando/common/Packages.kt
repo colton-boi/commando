@@ -27,8 +27,8 @@ fun getClassesInPackage(instanceClass: Class<*>, pkg: String, predicate: (Class<
 
     scanJar(instanceClass, { n -> n.startsWith(directory) && n.endsWith(".class") && "$" !in n }) { _, entryName ->
         val clazz = instanceClass.classLoader.loadClass(entryName
-                .replace('/', '.')
-                .replace(".class", ""))
+                .replace(".class", "")
+                .replace('/', '.'))
 
         if (!predicate.invoke(clazz))
             return@scanJar
