@@ -33,7 +33,7 @@ fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: Com
     manager.debugLog("Node is a subcommand node. Completing with args: $args")
 
     for (i in 0..<count) {
-        manager.debugLog("Pruned argument ${arguments.removeFirst()} ($i)")
+        manager.debugLog("Pruned argument ${arguments.first()} ($i)")
         arguments.removeFirst()
     }
 
