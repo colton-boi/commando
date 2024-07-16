@@ -8,19 +8,6 @@ import me.honkling.commando.common.tree.SubcommandNode
 fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: CommandNode<*>, args: Array<String>): List<String> {
     val last = args.last()
 
-    // /example
-    // /example one (int)
-    // /example two
-
-    // /example (one, two) (command, args(0) -> command)
-    // /example o (command, args(1) -> command)
-    // /example one 1 (subcommand, args(1) -> subcommand)
-    // /example two (subcommand, args(0) -> subcommand)
-
-
-    // /invsee <player>
-    // /invsee lilrosa
-
     manager.debugLog("Tab completing argument '$last'")
 
     val (completionNode, count) = getNode(node, args.toList())
