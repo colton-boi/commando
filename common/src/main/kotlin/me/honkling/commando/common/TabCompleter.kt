@@ -84,5 +84,5 @@ private fun getNode(node: CommandNode<*>, args: List<String>, count: Int = 0): P
     if (childNode is CommandNode<*>)
         return getNode(childNode, args.slice(1..<args.size), count + 1)
 
-    return childNode to count + 1
+    return childNode to count + if (childNode.name == node.name) 0 else 1
 }

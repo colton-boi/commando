@@ -126,6 +126,9 @@ abstract class CommandManager<T>(val plugin: IPlugin<T>, val debugMode: Boolean 
             while ((args.isNotEmpty() && parameter.greedy) || !doneOnce) {
                 val input = args.joinToString(" ")
 
+                if (input.isEmpty())
+                    return false to parameters
+
                 if (!type.validate(sender, input))
                     return false to parameters
 
