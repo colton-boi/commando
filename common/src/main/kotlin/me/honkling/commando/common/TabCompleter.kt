@@ -57,20 +57,22 @@ fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: Com
         if (input.isNotEmpty() && type.validate(sender, input)) {
             val (_, parseCount) = type.parse(sender, input)
 
-            for (i in 0..<parseCount) {
-                manager.debugLog("Pruning parameter '${mutableArgs.first()}' ($i)")
-                mutableArgs.removeFirst()
+            if (mutableArgs.size - parseCount != 0) {
+                for (i in 0..<parseCount) {
+                    manager.debugLog("Pruning parameter '${mutableArgs.first()}' ($i)")
+                    mutableArgs.removeFirst()
+                }
+
+                manager.debugLog("Arguments: $mutableArgs")
+
+                // If there are no more args left, then return an empty list.
+                if (mutableArgs.isEmpty() || mutableArgs.first().isEmpty()) {
+                    manager.debugLog("Parsed all args that we could, waiting on user for input.")
+                    return emptyList()
+                }
+
+                continue
             }
-
-            manager.debugLog("Arguments: $mutableArgs")
-
-            // If there are no more args left, then return an empty list.
-            if (mutableArgs.isEmpty() || mutableArgs.first().isEmpty()) {
-                manager.debugLog("Parsed all args that we could, waiting on user for input.")
-                return emptyList()
-            }
-
-            continue
         }
 
         if (input.isEmpty()) {
