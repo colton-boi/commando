@@ -17,28 +17,45 @@ fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: Com
     // /example one 1 (subcommand, args(1) -> subcommand)
     // /example two (subcommand, args(0) -> subcommand)
 
+    manager.debugLog("Tab completing argument '$last'")
+
     val (completionNode, count) = getNode(node, args.toList())
 
-    if (completionNode is CommandNode<*>)
-        return completionNode.children.map { it.name }.filter { it != completionNode.name }
+    manager.debugLog("Tab completion node: $completionNode (Count: $count)")
+
+    if (completionNode is CommandNode<*>) {
+        val subcommands = completionNode.children.map { it.name }.filter { it != completionNode.name }
+        manager.debugLog("Node is a command node. Returning subcommands: $subcommands")
+        return subcommands
+    }
 
     val arguments = args.toMutableList()
+    manager.debugLog("Node is a subcommand node. Completing with args: $args")
 
-    for (i in 0..<count)
+    for (i in 0..<count) {
+        manager.debugLog("Pruned argument ${arguments.removeFirst()} ($i)")
         arguments.removeFirst()
+    }
 
-    if (arguments.isEmpty())
+    if (arguments.isEmpty()) {
+        manager.debugLog("No more arguments left. Returning empty list.")
         return emptyList()
+    }
 
     for (parameter in (completionNode as SubcommandNode).parameters) {
+        manager.debugLog("Completing parameter $parameter")
         val type = manager.types[parameter.type] ?: return emptyList()
         val input = arguments.joinToString(" ")
+        manager.debugLog("Got a type $type, input is $input")
 
         if (arguments.isEmpty() || !type.validate(sender, input)) {
+            val completions = type.complete(sender, input)
             val parent = completionNode.parent
 
+            manager.debugLog("Last argument or type is invalid. Completing $completions & subcommands if possible.")
+
             return listOf(
-                *type.complete(sender, input).toTypedArray(),
+                *completions.toTypedArray(),
                 *(if (completionNode.name == parent?.name)
                       parent.children.map { it.name }.filter { it != parent.name }.toTypedArray()
                   else emptyArray())
@@ -47,9 +64,13 @@ fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: Com
 
         val (_, count) = type.parse(sender, input)
 
-        for (i in 0..<count)
+        for (i in 0..<count) {
+            manager.debugLog("Pruning more arguments: ${arguments.first()} ($i)")
             arguments.removeFirst()
+        }
     }
+
+    manager.debugLog("Returning empty completions.")
 
     return emptyList()
 }
