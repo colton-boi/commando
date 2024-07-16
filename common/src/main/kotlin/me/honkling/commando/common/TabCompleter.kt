@@ -48,7 +48,7 @@ fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: Com
     val parameters = (completionNode as SubcommandNode).parameters
     for (parameter in parameters) {
         val type = manager.types[parameter.type] ?: return emptyList()
-        val input = mutableArgs.joinToString("")
+        val input = mutableArgs.joinToString(" ")
 
         manager.debugLog("Trying parameter $parameter")
         manager.debugLog("Input: '$input'")
@@ -56,6 +56,8 @@ fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: Com
         // If we have input & the type validates the input, then parse & prune arguments
         if (input.isNotEmpty() && type.validate(sender, input)) {
             val (_, parseCount) = type.parse(sender, input)
+
+            manager.debugLog("After prune, size will be ${mutableArgs.size - parseCount} (currently ${mutableArgs.size})")
 
             if (mutableArgs.size - parseCount != 0) {
                 for (i in 0..<parseCount) {
