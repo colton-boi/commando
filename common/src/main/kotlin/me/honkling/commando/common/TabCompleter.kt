@@ -59,7 +59,7 @@ fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: Com
 
             manager.debugLog("After prune, size will be ${mutableArgs.size - parseCount} (currently ${mutableArgs.size})")
 
-            if (mutableArgs.size - parseCount != 0) {
+            if ((mutableArgs.size - parseCount) > 0) {
                 for (i in 0..<parseCount) {
                     manager.debugLog("Pruning parameter '${mutableArgs.first()}' ($i)")
                     mutableArgs.removeFirst()
