@@ -106,6 +106,11 @@ abstract class CommandManager<T>(val plugin: IPlugin<T>, val debugMode: Boolean 
                 return false to parameters
 
             if (args.isEmpty()) {
+                if (parameter.greedy) {
+                    parameters.add(createGreedyArray(parameter.type, mutableListOf()))
+                    return true to parameters
+                }
+
                 if (!parameter.required)
                     for (i in index..<command.parameters.size)
                         parameters.add(null)
@@ -122,11 +127,6 @@ abstract class CommandManager<T>(val plugin: IPlugin<T>, val debugMode: Boolean 
 
             val spread = mutableListOf<Any>()
             var doneOnce = false
-
-            if (args.isEmpty() && parameter.greedy) {
-                parameters.add(createGreedyArray(parameter.type, spread))
-                return true to parameters
-            }
 
             while ((args.isNotEmpty() && parameter.greedy) || !doneOnce) {
                 val input = args.joinToString(" ")
