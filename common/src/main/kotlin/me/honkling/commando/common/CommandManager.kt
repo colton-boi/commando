@@ -123,6 +123,11 @@ abstract class CommandManager<T>(val plugin: IPlugin<T>, val debugMode: Boolean 
             val spread = mutableListOf<Any>()
             var doneOnce = false
 
+            if (args.isEmpty() && parameter.greedy) {
+                parameters.add(spread)
+                return true to parameters
+            }
+
             while ((args.isNotEmpty() && parameter.greedy) || !doneOnce) {
                 val input = args.joinToString(" ")
 
