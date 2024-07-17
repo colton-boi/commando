@@ -124,7 +124,7 @@ abstract class CommandManager<T>(val plugin: IPlugin<T>, val debugMode: Boolean 
             var doneOnce = false
 
             if (args.isEmpty() && parameter.greedy) {
-                parameters.add(spread)
+                parameters.add(createGreedyArray(parameter.type, spread))
                 return true to parameters
             }
 
@@ -146,20 +146,23 @@ abstract class CommandManager<T>(val plugin: IPlugin<T>, val debugMode: Boolean 
                 doneOnce = true
             }
 
-            if (parameter.greedy) {
-                val array = newInstance(parameter.type, spread.size)
-
-                for ((i, parsed) in spread.withIndex())
-                    set(array, i, parsed)
-
-                parameters.add(array)
-            }
+            if (parameter.greedy)
+                parameters.add(createGreedyArray(parameter.type, spread))
         }
 
         if (args.isNotEmpty())
             return false to parameters
 
         return true to parameters
+    }
+
+    private fun createGreedyArray(type: Class<*>, spread: MutableList<Any>): Any {
+        val array = newInstance(type, spread.size)
+
+        for ((i, parsed) in spread.withIndex())
+            set(array, i, parsed)
+
+        return array
     }
 
     fun debugLog(message: String) {
