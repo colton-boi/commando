@@ -15,10 +15,16 @@ fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: Com
     manager.debugLog("Tab completion node: $completionNode (Count: $count)")
 
     if (completionNode is CommandNode<*>) {
-        // todo: just add to completions
-        val subcommands = completionNode.children.map { it.name }.filter { it != completionNode.name }
+        val default = completionNode.children.find { it.name == completionNode.name && it is SubcommandNode } as SubcommandNode?
+        val subcommands = completionNode.children.map { it.name }.filter { it != completionNode.name }.toTypedArray()
+        val type = default?.parameters?.firstOrNull()?.type
+        val completions = type
+            ?.let { manager.types[it] }
+            ?.complete(sender, "")
+            ?.toTypedArray() ?: emptyArray()
+
         manager.debugLog("Node is a command node. Returning subcommands: $subcommands")
-        return subcommands
+        return listOf(*subcommands, *completions)
     }
 
     val mutableArgs = args.toMutableList()
@@ -74,7 +80,10 @@ fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: Com
         val completions = type.complete(sender, input).toTypedArray()
         val subcommands =
             if (parent?.name == completionNode.name)
-                parent.children.map { it.name }.filter { input.lowercase() in it.lowercase() }.toTypedArray()
+                parent.children
+                    .map { it.name }
+                    .filter { input.lowercase() in it.lowercase() && it != parent.name }
+                    .toTypedArray()
             else emptyArray()
 
         manager.debugLog("Adding completions: ${completions.toList()}")
@@ -90,7 +99,7 @@ fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: Com
 }
 
 private fun getNode(node: CommandNode<*>, args: List<String>, count: Int = 0): Pair<Node, Int> {
-    if (args.isEmpty())
+    if (args.isEmpty() || args.first().isEmpty())
         return node to count
 
     val childNode = node.children.find { it.name == args[0] || it.name == node.name } ?: return node to count
