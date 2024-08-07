@@ -61,6 +61,7 @@ class SpigotCommandManager(plugin: JavaPlugin, debugMode: Boolean = false) : Com
         }
 
         val (subcommand, parameters) = result
+        subcommand.method.isAccessible = true
         subcommand.method.invoke(null, sender, *parameters.toTypedArray())
 
         return true
