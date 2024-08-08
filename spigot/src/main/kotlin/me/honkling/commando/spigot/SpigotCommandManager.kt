@@ -67,7 +67,7 @@ class SpigotCommandManager(plugin: JavaPlugin, debugMode: Boolean = false) : Com
 
         // Validate we're the correct sender
         val senderType = subcommand.method.parameterTypes[0]
-        if (senderType != sender::class.java)
+        if (senderType.isAssignableFrom(sender::class.java))
             return false
 
         val instance =

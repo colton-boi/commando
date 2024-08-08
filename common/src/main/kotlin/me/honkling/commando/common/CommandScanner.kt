@@ -165,3 +165,12 @@ private fun getRegisterCommand(clazz: Class<*>): Method? {
 		null
 	}
 }
+
+private fun hasKotlinReflect(): Boolean {
+	try {
+		Class.forName("kotlin.reflect.KTypes")
+		return true
+	} catch (exception: ClassNotFoundException) {
+		return false
+	}
+}
