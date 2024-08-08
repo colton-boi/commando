@@ -4,7 +4,7 @@ import me.honkling.commando.common.generic.ICommandSender
 
 object FloatType : Type<Float> {
     override fun validate(sender: ICommandSender<*>, input: String): Boolean {
-        val regex = Regex("^\\d+(\\.\\d+(?!\\S))?")
+        val regex = Regex("^-?\\d+(\\.\\d+(?!\\S))?")
         return regex.containsMatchIn(input)
     }
 

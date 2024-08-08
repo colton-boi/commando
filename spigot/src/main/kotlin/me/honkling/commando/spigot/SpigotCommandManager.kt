@@ -60,8 +60,15 @@ class SpigotCommandManager(plugin: JavaPlugin, debugMode: Boolean = false) : Com
             return false
         }
 
+
         val (subcommand, parameters) = result
         subcommand.method.isAccessible = true
+
+        // Validate we're the correct sender
+        val senderType = subcommand.method.parameterTypes[0]
+        if (senderType != sender::class.java)
+            return false
+
         subcommand.method.invoke(null, sender, *parameters.toTypedArray())
 
         return true
