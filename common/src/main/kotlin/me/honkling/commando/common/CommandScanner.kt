@@ -146,7 +146,7 @@ private fun isSubcommand(manager: CommandManager<*>, method: Method): Boolean {
 	if (method.isAnnotationPresent(Ignore::class.java))
 		return false
 
-	if (!isStatic) {
+	if (!isStatic && method.declaringClass.declaredFields.none { it.name == "INSTANCE" }) {
 		manager.plugin.warn("Found a non-static method '${method.name}'. Please make this static (to be registered as a subcommand) or mark as ignored (to hide this warning)")
 		return false
 	}
