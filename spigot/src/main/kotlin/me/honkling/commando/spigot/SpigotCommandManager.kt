@@ -18,6 +18,7 @@ import org.bukkit.command.PluginCommand
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.lang.reflect.Modifier
+import kotlin.reflect.jvm.kotlinFunction
 
 class SpigotCommandManager(plugin: JavaPlugin, debugMode: Boolean = false) : CommandManager<JavaPlugin>(Plugin(plugin), debugMode) {
     init {

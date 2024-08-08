@@ -9,6 +9,7 @@ import me.honkling.commando.common.tree.Parameter
 import me.honkling.commando.common.tree.SubcommandNode
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
+import kotlin.reflect.jvm.kotlinFunction
 
 fun scanForCommands(manager: CommandManager<*>, pkg: String): List<CommandNode<*>> {
 	manager.debugLog("Scanning package \"$pkg\"")
@@ -114,6 +115,13 @@ private fun parseParameters(manager: CommandManager<*>, method: Method): List<Pa
 }
 
 private fun isParameterRequired(parameter: java.lang.reflect.Parameter): Boolean {
+	if (hasKotlinReflect() && parameter.declaringExecutable is Method) {
+		val method = parameter.declaringExecutable as Method
+		val function = method.kotlinFunction
+		val index = method.parameters.withIndex().find { it.value == parameter }!!.index
+		return function?.parameters?.get(index)?.isOptional == false
+	}
+
 	return !parameter.isAnnotationPresent(Optional::class.java) && parameter.annotations.none { "Nullable" in (it.annotationClass.qualifiedName ?: "") }
 }
 
