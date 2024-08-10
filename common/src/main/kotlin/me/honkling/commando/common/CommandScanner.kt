@@ -135,16 +135,17 @@ private fun getParameterType(manager: CommandManager<*>, parameter: java.lang.re
 }
 
 private fun getClassFromType(clazz: Class<*>): Class<*> {
-	return Class.forName(clazz
-		.name
-		.replace("byte", "java.lang.Byte")
-		.replace("long", "java.lang.Long")
-		.replace("int", "java.lang.Integer")
-		.replace("short", "java.lang.Short")
-		.replace("float", "java.lang.Float")
-		.replace("double", "java.lang.Double")
-		.replace("char", "java.lang.Character")
-		.replace("boolean", "java.lang.Boolean"))
+	return Class.forName(when (clazz.name) {
+		"byte" -> "java.lang.Byte"
+		"long" -> "java.lang.Long"
+		"int" -> "java.lang.Integer"
+		"short" -> "java.lang.Short"
+		"float" -> "java.lang.Float"
+		"double" -> "java.lang.Double"
+		"char" -> "java.lang.Character"
+		"boolean" -> "java.lang.Boolean"
+		else -> clazz.name
+	})
 }
 
 private fun isSubcommand(manager: CommandManager<*>, method: Method): Boolean {
