@@ -54,6 +54,9 @@ private fun parseChildren(manager: CommandManager<*>, node: Node, clazz: Class<*
 }
 
 private fun parseSubcommand(manager: CommandManager<*>, parent: Node, method: Method): SubcommandNode? {
+	if ("\$lambda" in method.name)
+		return null
+
 	if (!validateParameters(manager, method)) {
 		manager.plugin.warn("Skipping invalid subcommand '${method.name}'")
 		return null
