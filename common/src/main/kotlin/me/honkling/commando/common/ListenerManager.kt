@@ -4,9 +4,11 @@ import me.honkling.commando.common.annotations.Listener
 import me.honkling.commando.common.generic.IPlugin
 
 abstract class ListenerManager<T>(val plugin: IPlugin<T>, val debugMode: Boolean = false) {
-    fun registerListeners(pkg: String) {
-        val listeners = getClassesInPackage(plugin.get()!!::class.java, pkg, ::isListener)
-        listeners.forEach(::registerClass)
+    fun registerListeners(vararg packages: String) {
+        for (pkg in packages) {
+            val listeners = getClassesInPackage(plugin.get()!!::class.java, pkg, ::isListener)
+            listeners.forEach(::registerClass)
+        }
     }
 
     abstract fun registerClass(clazz: Class<*>)
