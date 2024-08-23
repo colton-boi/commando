@@ -5,7 +5,7 @@ import me.honkling.commando.common.types.Type
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 
-object PlayerType : Type<Player> {
+object PlayerType : Type<Player>() {
     override fun validate(sender: ICommandSender<*>, input: String): Boolean {
         val first = input.split(" ")[0]
         return MinecraftServer.getConnectionManager().getOnlinePlayerByUsername(first) != null

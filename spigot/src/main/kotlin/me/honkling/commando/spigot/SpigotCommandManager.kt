@@ -87,6 +87,7 @@ class SpigotCommandManager(plugin: JavaPlugin, debugMode: Boolean = false) : Com
         val command = constructor.newInstance(node.name, plugin.get()) as PluginCommand
 
         command.description = node.description
+        command.usage
         command.usage = LegacyComponentSerializer.legacySection().serialize(mm.deserialize(node.usage.replace("{0}", node.name)))
         command.aliases = node.aliases
         command.permission = node.permission.replace("{0}", node.name)
