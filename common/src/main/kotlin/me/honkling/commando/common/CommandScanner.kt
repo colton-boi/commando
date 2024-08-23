@@ -26,6 +26,8 @@ private fun parseClasses(manager: CommandManager<*>, classes: List<Class<*>>): L
 }
 
 private fun parseClass(manager: CommandManager<*>, parent: Node?, clazz: Class<*>): CommandNode<*> {
+	manager.debugLog("Parsing class ${clazz.name}")
+
 	val annotation = clazz.getAnnotation(Command::class.java)
 	val node =
 		if (annotation != null) CommandNode<Any>(
@@ -54,6 +56,8 @@ private fun parseChildren(manager: CommandManager<*>, node: Node, clazz: Class<*
 }
 
 private fun parseSubcommand(manager: CommandManager<*>, parent: Node, method: Method): SubcommandNode? {
+	manager.debugLog("Parsing subcommand ${method.name}")
+
 	if ("\$lambda" in method.name)
 		return null
 
@@ -72,6 +76,9 @@ private fun parseSubcommand(manager: CommandManager<*>, parent: Node, method: Me
 
 private fun validateParameters(manager: CommandManager<*>, method: Method): Boolean {
 	var hasOptional = false
+
+	if (method.parameterCount == 0)
+		return false
 
 	val first = method.parameters.first().type
 	if (!manager.isValidSender(first)) {
