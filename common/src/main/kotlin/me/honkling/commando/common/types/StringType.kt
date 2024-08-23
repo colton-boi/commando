@@ -13,7 +13,7 @@ object StringType : Type<String>() {
         val match = regex.find(input)!!.value
         val size = match.split(" ").size
 
-        if (match.startsWith("\"") && match.endsWith("\""))
+        if (match.startsWith("\"") && match.endsWith("\"") && match.length != 1)
             return match
                     .substring(1, match.length - 1)
                     .replace("\\\"", "\"")
