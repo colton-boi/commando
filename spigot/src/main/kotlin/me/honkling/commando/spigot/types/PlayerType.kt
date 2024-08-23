@@ -4,13 +4,14 @@ import me.honkling.commando.common.generic.ICommandSender
 import me.honkling.commando.common.types.Type
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 
-object PlayerType : Type<OfflinePlayer> {
+object PlayerType : Type<Player>() {
     override fun validate(sender: ICommandSender<*>, input: String): Boolean {
         return Bukkit.getPlayerExact(input.split(" ")[0]) != null
     }
 
-    override fun parse(sender: ICommandSender<*>, input: String): Pair<OfflinePlayer, Int> {
+    override fun parse(sender: ICommandSender<*>, input: String): Pair<Player, Int> {
         return Bukkit.getPlayerExact(input.split(" ")[0])!! to 1
     }
 

@@ -2,7 +2,7 @@ package me.honkling.commando.common.types
 
 import me.honkling.commando.common.generic.ICommandSender
 
-object StringType : Type<String> {
+object StringType : Type<String>() {
     private val regex = Regex("^(\"([^\"]|\\\\\")*\"|\\S+)")
 
     override fun validate(sender: ICommandSender<*>, input: String): Boolean {
