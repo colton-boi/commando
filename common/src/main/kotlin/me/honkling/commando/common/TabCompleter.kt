@@ -37,6 +37,11 @@ fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: Com
 
     manager.debugLog("Arguments list post prune: $mutableArgs")
 
+    if (mutableArgs.isEmpty()) {
+        manager.debugLog("No more arguments to complete. Waiting on user for input.")
+        return emptyList()
+    }
+
     // Prune passed parameters or complete current one
     val parameters = (completionNode as SubcommandNode).parameters
     for (parameter in parameters) {
@@ -61,18 +66,13 @@ fun tabComplete(manager: CommandManager<*>, sender: ICommandSender<*>, node: Com
                 manager.debugLog("Arguments: $mutableArgs")
 
                 // If there are no more args left, then return an empty list.
-                if (mutableArgs.isEmpty() || mutableArgs.first().isEmpty()) {
+                if (mutableArgs.isEmpty()) {
                     manager.debugLog("Parsed all args that we could, waiting on user for input.")
                     return emptyList()
                 }
 
                 continue
             }
-        }
-
-        if (input.isEmpty()) {
-            manager.debugLog("Waiting on user for input.")
-            return emptyList()
         }
 
         // This is the argument we need to complete.
