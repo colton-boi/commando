@@ -102,7 +102,7 @@ private fun getNode(node: CommandNode<*>, args: List<String>, count: Int = 0): P
     if (args.isEmpty() || args.first().isEmpty())
         return node to count
 
-    val childNode = node.children.find { it.name == args[0] || it.name == node.name } ?: return node to count
+    val childNode = node.children.find { it.name == args[0] } ?: return node to count
 
     if (childNode is CommandNode<*>)
         return getNode(childNode, args.slice(1..<args.size), count + 1)
