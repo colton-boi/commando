@@ -15,6 +15,7 @@ import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.command.builder.condition.CommandCondition
 import net.minestom.server.entity.Player
 import net.minestom.server.permission.Permission
+import java.lang.reflect.Modifier
 
 class MinestomCommandManager(plugin: MinestomPlugin, debugMode: Boolean = false) : CommandManager<MinestomPlugin>(Plugin(plugin), debugMode) {
     init {
@@ -50,6 +51,8 @@ class MinestomCommandManager(plugin: MinestomPlugin, debugMode: Boolean = false)
         }
 
         val (subcommand, parameters) = result
+        subcommand.method.isAccessible = true
+        
         subcommand.method.invoke(null, sender, *parameters.toTypedArray())
 
         return true
