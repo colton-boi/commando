@@ -83,7 +83,11 @@ class MinestomCommandManager(plugin: MinestomPlugin, debugMode: Boolean = false)
                 }, params)
 
                 params.setSuggestionCallback { sender, context, suggestion ->
-                    val completions = tabComplete(this@MinestomCommandManager, SenderProvider(sender), node, context.get(params))
+                    // Replacement of \u0000 is a workaround for a bug in Brigadier (I think?) that appends a
+                    // null character to the end of the string, breaking any .startsWith() checks
+                    val completions = tabComplete(this@MinestomCommandManager, SenderProvider(sender), node,
+                        context.get(params).map { it.replace("\u0000", "") }.toTypedArray())
+
                     completions.forEach {
                         suggestion.addEntry(SuggestionEntry(it))
                     }
