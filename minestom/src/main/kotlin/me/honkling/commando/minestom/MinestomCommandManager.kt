@@ -58,7 +58,11 @@ class MinestomCommandManager(plugin: MinestomPlugin, debugMode: Boolean = false)
         if (!senderType.isAssignableFrom(sender::class.java))
             return false
 
-        subcommand.method.invoke(null, sender, *parameters.toTypedArray())
+        val instance =
+            if (Modifier.isStatic(subcommand.method.modifiers)) null
+            else subcommand.method.declaringClass.getDeclaredField("INSTANCE")[null]
+
+        subcommand.method.invoke(instance, sender, *parameters.toTypedArray())
 
         return true
     }
