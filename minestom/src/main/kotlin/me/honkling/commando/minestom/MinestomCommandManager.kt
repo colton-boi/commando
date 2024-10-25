@@ -13,6 +13,7 @@ import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.CommandExecutor
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.command.builder.condition.CommandCondition
+import net.minestom.server.command.builder.suggestion.SuggestionEntry
 import net.minestom.server.entity.Player
 import net.minestom.server.permission.Permission
 import java.lang.reflect.Modifier
@@ -82,7 +83,10 @@ class MinestomCommandManager(plugin: MinestomPlugin, debugMode: Boolean = false)
                 }, params)
 
                 params.setSuggestionCallback { sender, context, suggestion ->
-                    tabComplete(this@MinestomCommandManager, SenderProvider(sender), node, context.get(params))
+                    val completions = tabComplete(this@MinestomCommandManager, SenderProvider(sender), node, context.get(params))
+                    completions.forEach {
+                        suggestion.addEntry(SuggestionEntry(it))
+                    }
                 }
             }
 
